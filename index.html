@@ -1,23 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test GitHub Pages</title>
+    <title>Ajouter des noms d'élèves</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background-color: #f0f0f0;
+            margin: 20px;
         }
         h1 {
-            color: #4CAF50;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 5px 0;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <h1> Pages fonctionne ! 🎉</h1>
-    <p>Si vous voyez ce message, c'est que tout est configuré </p>
+
+    <div class="container">
+        <h1>Liste des élèves</h1>
+        <label for="nom">Nom de l'élève :</label>
+        <input type="text" id="nom" placeholder="Entrez un nom">
+        <button onclick="ajouterNom()">Ajouter</button>
+
+        <h2>Élèves ajoutés :</h2>
+        <ul id="listeEleves"></ul>
+    </div>
+
+    <script>
+        function ajouterNom() {
+            // Récupère le nom entré dans le champ de texte
+            var nom = document.getElementById('nom').value;
+
+            // Vérifie si le champ n'est pas vide
+            if (nom.trim() === "") {
+                alert("Veuillez entrer un nom.");
+                return;
+            }
+
+            // Crée un nouvel élément de liste
+            var li = document.createElement("li");
+            li.textContent = nom;
+
+            // Ajoute l'élément à la liste
+            document.getElementById('listeEleves').appendChild(li);
+
+            // Réinitialise le champ de texte
+            document.getElementById('nom').value = "";
+        }
+    </script>
+
 </body>
 </html>
