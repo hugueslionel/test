@@ -3,29 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter des noms d'élèves</title>
+    <title>Liste des élèves</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        h1 {
-            text-align: center;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 8px;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-        button {
-            padding: 8px 16px;
-            font-size: 16px;
-            cursor: pointer;
+        #eleveForm {
+            margin-bottom: 20px;
         }
         ul {
             list-style-type: none;
@@ -33,44 +18,68 @@
         }
         li {
             padding: 5px 0;
-            font-size: 18px;
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1>Liste des élèves</h1>
-        <label for="nom">Nom de l'élève :</label>
-        <input type="text" id="nom" placeholder="Entrez un nom">
-        <button onclick="ajouterNom()">Ajouter</button>
-
-        <h2>Élèves ajoutés :</h2>
-        <ul id="listeEleves"></ul>
-    </div>
+    <h1>Gestion de la liste des élèves</h1>
+    <form id="eleveForm">
+        <input type="text" id="nomEleve" placeholder="Nom de l'élève" required>
+        <button type="submit">Ajouter un élève</button>
+    </form>
+    <ul id="listeEleves"></ul>
 
     <script>
-        function ajouterNom() {
-            // Récupère le nom entré dans le champ de texte
-            var nom = document.getElementById('nom').value;
+        // Récupérer la liste d'élèves depuis le localStorage
+        const listeEleves = JSON.parse(localStorage.getItem('eleves')) || [];
 
-            // Vérifie si le champ n'est pas vide
-            if (nom.trim() === "") {
-                alert("Veuillez entrer un nom.");
-                return;
-            }
+        const ulListeEleves = document.getElementById('listeEleves');
+        const form = document.getElementById('eleveForm');
+        const inputNomEleve = document.getElementById('nomEleve');
 
-            // Crée un nouvel élément de liste
-            var li = document.createElement("li");
-            li.textContent = nom;
+        // Fonction pour afficher les élèves dans la liste
+        function afficherListe() {
+            ulListeEleves.innerHTML = '';
+            listeEleves.forEach((eleve, index) => {
+                const li = document.createElement('li');
+                li.textContent = eleve;
 
-            // Ajoute l'élément à la liste
-            document.getElementById('listeEleves').appendChild(li);
-
-            // Réinitialise le champ de texte
-            document.getElementById('nom').value = "";
+                // Ajouter un bouton pour supprimer l'élève
+                const btnSupprimer = document.createElement('button');
+                btnSupprimer.textContent = 'Supprimer';
+                btnSupprimer.style.marginLeft = '10px';
+                btnSupprimer.onclick = () => supprimerEleve(index);
+                
+                li.appendChild(btnSupprimer);
+                ulListeEleves.appendChild(li);
+            });
         }
-    </script>
 
+        // Fonction pour ajouter un élève
+        function ajouterEleve(e) {
+            e.preventDefault(); // Empêcher le rechargement de la page
+            const nom = inputNomEleve.value.trim();
+            if (nom) {
+                listeEleves.push(nom);
+                localStorage.setItem('eleves', JSON.stringify(listeEleves));
+                afficherListe();
+                inputNomEleve.value = '';
+            }
+        }
+
+        // Fonction pour supprimer un élève
+        function supprimerEleve(index) {
+            listeEleves.splice(index, 1);
+            localStorage.setItem('eleves', JSON.stringify(listeEleves));
+            afficherListe();
+        }
+
+        // Initialiser la liste affichée
+        afficherListe();
+
+        // Ajouter un écouteur d'événement pour le formulaire
+        form.addEventListener('submit', ajouterEleve);
+    </script>
 </body>
 </html>
+
