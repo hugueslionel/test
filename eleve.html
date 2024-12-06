@@ -3,12 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détails de l'élève</title>
+    <title>Liste des élèves</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #f7f7f7;
+            background-color: var(--background-color, #f7f7f7);
+        }
+        #eleveForm {
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 5px 0;
         }
         a {
             text-decoration: none;
@@ -20,23 +30,74 @@
     </style>
 </head>
 <body>
-    <h1>Détails de l'élève</h1>
-    <p id="nomEleve"></p>
-    <a href="index.html">Retour à la liste</a>
+    <h1>Gestion de la liste des élèves</h1>
+    <form id="eleveForm">
+        <input type="text" id="nomEleve" placeholder="Nom de l'élève" required>
+        <button type="submit">Ajouter un élève</button>
+    </form>
+    <ul id="listeEleves"></ul>
 
     <script>
-        // Récupérer l'index depuis l'URL
-        const params = new URLSearchParams(window.location.search);
-        const index = params.get('index');
-
         // Récupérer la liste d'élèves depuis le localStorage
         const listeEleves = JSON.parse(localStorage.getItem('eleves')) || [];
 
-        // Afficher le nom de l'élève
-        const nomEleve = listeEleves[index];
-        document.getElementById('nomEleve').textContent = nomEleve
-            ? `Nom de l'élève : ${nomEleve}`
-            : \"L'élève n'existe pas.\";
+        const ulListeEleves = document.getElementById('listeEleves');
+        const form = document.getElementById('eleveForm');
+        const inputNomEleve = document.getElementById('nomEleve');
+
+        // Fonction pour afficher les élèves dans la liste
+        function afficherListe() {
+            // Sauvegarder le DOM et mettre à jour uniquement les changements
+            const fragment = document.createDocumentFragment();
+
+            listeEleves.forEach((eleve, index) => {
+                const li = document.createElement('li');
+                const lien = document.createElement('a');
+                lien.textContent = eleve;
+                lien.href = `eleve.html?index=${index}`;
+
+                // Ajouter un bouton pour supprimer l'élève
+                const btnSupprimer = document.createElement('button');
+                btnSupprimer.textContent = 'Supprimer';
+                btnSupprimer.style.marginLeft = '10px';
+                btnSupprimer.onclick = (e) => {
+                    e.preventDefault(); // Empêcher la navigation lors de la suppression
+                    supprimerEleve(index);
+                };
+
+                li.appendChild(lien);
+                li.appendChild(btnSupprimer);
+                fragment.appendChild(li);
+            });
+
+            ulListeEleves.innerHTML = ''; // Nettoyage du contenu uniquement ici
+            ulListeEleves.appendChild(fragment);
+        }
+
+        // Fonction pour ajouter un élève
+        function ajouterEleve(e) {
+            e.preventDefault(); // Empêcher le rechargement de la page
+            const nom = inputNomEleve.value.trim();
+            if (nom) {
+                listeEleves.push(nom);
+                localStorage.setItem('eleves', JSON.stringify(listeEleves));
+                afficherListe();
+                inputNomEleve.value = '';
+            }
+        }
+
+        // Fonction pour supprimer un élève
+        function supprimerEleve(index) {
+            listeEleves.splice(index, 1);
+            localStorage.setItem('eleves', JSON.stringify(listeEleves));
+            afficherListe();
+        }
+
+        // Initialiser la liste affichée
+        afficherListe();
+
+        // Ajouter un écouteur d'événement pour le formulaire
+        form.addEventListener('submit', ajouterEleve);
     </script>
 </body>
 </html>
