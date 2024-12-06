@@ -56,11 +56,12 @@
                 lien.textContent = eleve;
                 lien.href = `eleve.html?index=${index}`;
 
+                // Ajouter un événement clic pour redirection sécurisée
                 lien.addEventListener('click', (e) => {
                     e.preventDefault(); // Empêcher la navigation par défaut
-                    const eleveIndex = parseInt(new URLSearchParams(new URL(lien.href).search).get('index'), 10);
+                    const eleveIndex = parseInt(new URLSearchParams(new URL(lien.href, window.location.href).search).get('index'), 10);
                     if (!isNaN(eleveIndex) && listeEleves[eleveIndex]) {
-                        window.location.href = `eleve.html?index=${eleveIndex}`;
+                        window.location.assign(`eleve.html?index=${eleveIndex}`);
                     } else {
                         alert('Données d’élève introuvables ou corrompues.');
                     }
